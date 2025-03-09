@@ -5,6 +5,7 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+#include "edconfig.h"
 
 #define QUEUE_LENGTH 5
 #define STR_SIZE 100

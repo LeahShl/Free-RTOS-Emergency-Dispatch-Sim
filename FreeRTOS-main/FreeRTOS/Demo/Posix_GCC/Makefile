@@ -15,7 +15,7 @@ KERNEL_DIR            := ${FREERTOS_DIR}/Source
 INCLUDE_DIRS          := -I.
 INCLUDE_DIRS          += -I./Trace_Recorder_Configuration
 INCLUDE_DIRS          += -I./lib/include
-INCLUDE_DIRS          += -I./myProject
+INCLUDE_DIRS          += -I./EmergencyDispatchSys
 INCLUDE_DIRS          += -I${KERNEL_DIR}/include
 INCLUDE_DIRS          += -I${KERNEL_DIR}/portable/ThirdParty/GCC/Posix
 INCLUDE_DIRS          += -I${KERNEL_DIR}/portable/ThirdParty/GCC/Posix/utils
@@ -28,7 +28,7 @@ INCLUDE_DIRS          += -I${FREERTOS_PLUS_DIR}/Source/FreeRTOS-Plus-Trace/strea
 SOURCE_FILES          := $(wildcard *.c)
 SOURCE_FILES          += $(wildcard ${FREERTOS_DIR}/Source/*.c)
 SOURCE_FILES          += $(wildcard ./lib/src/*.c)
-SOURCE_FILES          += $(wildcard ./myProject/*.c)
+SOURCE_FILES          += $(wildcard ./EmergencyDispatchSys/*.c)
 # Memory manager (use malloc() / free() )
 SOURCE_FILES          += ${KERNEL_DIR}/portable/MemMang/heap_3.c
 # posix port

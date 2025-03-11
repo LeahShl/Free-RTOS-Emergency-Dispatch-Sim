@@ -60,7 +60,7 @@ void Task_Dispatcher(void *pvParameters)
 
     for (;;)
     {
-        if (xQueueReceive(xEventQueue, &event, portMAX_DELAY))
+        if (xQueueReceive(xEventQueue, &event, portMAX_DELAY) == pdPASS)
         {
             LogEvent_t log;
             log.event_id = event.event_id;
@@ -103,7 +103,7 @@ void Task_Police(void *pvParameters)
 
     for(;;)
     {
-        if(xQueueReceive(xPoliceQueue, &event, portMAX_DELAY))
+        if(xQueueReceive(xPoliceQueue, &event, portMAX_DELAY) == pdPASS)
         {
             LogEvent_t log;
             log.event_id = event.event_id;
@@ -111,7 +111,7 @@ void Task_Police(void *pvParameters)
             strcpy(log.msg, "[Police] Received event");
             xQueueSend(xLogQueue, &log, portMAX_DELAY);
 
-            if(xSemaphoreTake(xSemPoliceCabs, portMAX_DELAY))
+            if(xSemaphoreTake(xSemPoliceCabs, portMAX_DELAY) == pdPASS)
             {
                 vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
 
@@ -120,6 +120,26 @@ void Task_Police(void *pvParameters)
                 xQueueSend(xLogQueue, &log, portMAX_DELAY);
 
                 xSemaphoreGive(xSemPoliceCabs);
+            }
+            else if (xSemaphoreTake(xSemAmbulances, portMAX_DELAY) == pdPASS)
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_PLC_HNDL;
+                strcpy(log.msg, "[Police] Finihed handling event WITH BORROWED AMBULANCE");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemAmbulances);
+            }
+            else if (xSemaphoreTake(xSemFiretrucks, portMAX_DELAY) == pdPASS)
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_PLC_HNDL;
+                strcpy(log.msg, "[Police] Finihed handling event WITH BORROWED FIRETRUCK");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemFiretrucks);
             }
         }
     }
@@ -131,7 +151,7 @@ void Task_Ambulance(void *pvParameters)
 
     for(;;)
     {
-        if(xQueueReceive(xAmbulanceQueue, &event, portMAX_DELAY))
+        if(xQueueReceive(xAmbulanceQueue, &event, portMAX_DELAY) == pdPASS)
         {
             LogEvent_t log;
             log.event_id = event.event_id;
@@ -139,7 +159,7 @@ void Task_Ambulance(void *pvParameters)
             strcpy(log.msg, "[Ambulance] Received event");
             xQueueSend(xLogQueue, &log, portMAX_DELAY);
 
-            if(xSemaphoreTake(xSemAmbulances, portMAX_DELAY))
+            if(xSemaphoreTake(xSemAmbulances, portMAX_DELAY) == pdPASS)
             {
                 vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
 
@@ -148,6 +168,26 @@ void Task_Ambulance(void *pvParameters)
                 xQueueSend(xLogQueue, &log, portMAX_DELAY);
 
                 xSemaphoreGive(xSemAmbulances);
+            }
+            else if (xSemaphoreTake(xSemPoliceCabs, portMAX_DELAY) == pdPASS)
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_AMB_HNDL;
+                strcpy(log.msg, "[Ambulance] Finihed handling event WITH BORROWED POLICE CAB");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemPoliceCabs);
+            }
+            else if (xSemaphoreTake(xSemFiretrucks, portMAX_DELAY) == pdPASS)
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_AMB_HNDL;
+                strcpy(log.msg, "[Ambulance] Finihed handling event WITH BORROWED FIRETRUCK");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemFiretrucks);
             }
         }
     }
@@ -159,7 +199,7 @@ void Task_FireDepartment(void *pvParameters)
 
     for(;;)
     {
-        if(xQueueReceive(xFireDeptQueue, &event, portMAX_DELAY))
+        if(xQueueReceive(xFireDeptQueue, &event, portMAX_DELAY) == pdPASS)
         {
             LogEvent_t log;
             log.event_id = event.event_id;
@@ -167,7 +207,7 @@ void Task_FireDepartment(void *pvParameters)
             strcpy(log.msg, "[Fire Dept] Received event");
             xQueueSend(xLogQueue, &log, portMAX_DELAY);
 
-            if(xSemaphoreTake(xSemFiretrucks, portMAX_DELAY))
+            if(xSemaphoreTake(xSemFiretrucks, portMAX_DELAY) == pdPASS)
             {
                 vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
 
@@ -176,6 +216,26 @@ void Task_FireDepartment(void *pvParameters)
                 xQueueSend(xLogQueue, &log, portMAX_DELAY);
 
                 xSemaphoreGive(xSemFiretrucks);
+            }
+            else if(xSemaphoreTake(xSemAmbulances, portMAX_DELAY) == pdPASS)
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_FIR_HNDL;
+                strcpy(log.msg, "[Fire Dept] Finihed handling event WITH BORROWED AMBULANCE");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemAmbulances);
+            }
+            else if (xSemaphoreTake(xSemPoliceCabs, portMAX_DELAY) == pdPASS)
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_FIR_HNDL;
+                strcpy(log.msg, "[Fire Dept] Finihed handling event WITH BORROWED POLICE CAB");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemPoliceCabs);
             }
         }
     }
@@ -187,7 +247,7 @@ void Task_Logger(void *pvParameters)
 
     for (;;)
     {
-        if (xQueueReceive(xLogQueue, &log, portMAX_DELAY))
+        if (xQueueReceive(xLogQueue, &log, portMAX_DELAY) == pdPASS)
         {
             printf("Event type %d: %s [status: %d]\n", log.event_id, log.msg, log.log_type);
         }

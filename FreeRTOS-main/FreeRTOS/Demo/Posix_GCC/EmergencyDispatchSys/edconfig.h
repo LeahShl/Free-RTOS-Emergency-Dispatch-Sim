@@ -24,7 +24,7 @@
  */
 #define MIN_DELAY 1000 // Min amount of miliseconds for event generation
 #define MAX_DELAY 5000 // Max amount of miliseconds for event generation
-#define HNDL_DELAY 8000 // Event handling time in ms
+#define HNDL_DELAY 3000 // Event handling time in ms
 
 /**
  * Priorities

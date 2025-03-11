@@ -29,14 +29,26 @@
 /**
  * Priorities
  */
-#define PR_GEN 4 // Priority of event generator
+#define PR_GEN 3 // Priority of event generator
 #define PR_DIS 5 // Priority of dispatcher
-#define PR_PLC 3 // Priority of police 
+#define PR_PLC 4 // Priority of police 
 #define PR_AMB 6 // Priority of ambulance
 #define PR_FIR 7 // Priority of fire department
 #define PR_LOG 2 // Priority of logger
 
 /**
+ * Log events
+ */
+#define LOG_LEN 256 // Log message length
+#define LOG_CREATE 1 // Event created
+#define LOG_SENT 2 // Event sent
+#define LOG_PLC_HNDL 3 // Police handled event
+#define LOG_AMB_HNDL 4 // Ambulance handled event
+#define LOG_FIR_HNDL 5 // Fire department handled event
+#define LOG_ERR 6 // Error
+
+
+/**
  * Misc.
  */
-#define EVNTQ_SIZE 50 // Size of the event queue
+#define QUEUE_SIZE 50 // Size of queue

@@ -62,17 +62,63 @@ void Task_Dispatcher(void *pvParameters)
     {
         if (xQueueReceive(xEventQueue, &event, portMAX_DELAY))
         {
-            // TODO: send event to department
-
             LogEvent_t log;
             log.event_id = event.event_id;
-            log.log_type = LOG_SENT;
-            strcpy(log.msg, "[Dispatcher] Sent event");
+
+            switch (event.event_id)
+            {
+            case CODE_PLC:
+                xQueueSend(xPoliceQueue, &event, portMAX_DELAY);
+                log.log_type = LOG_SENT;
+                strcpy(log.msg, "[Dispatcher] Sent event to police");
+                break;
+
+            case CODE_AMB:
+                xQueueSend(xAmbulanceQueue, &event, portMAX_DELAY);
+                log.log_type = LOG_SENT;
+                strcpy(log.msg, "[Dispatcher] Sent event to first aid");
+                break;
+
+            case CODE_FIR:
+                xQueueSend(xFireDeptQueue, &event, portMAX_DELAY);
+                log.log_type = LOG_SENT;
+                strcpy(log.msg, "[Dispatcher] Sent event to fire department");
+                break;
+            
+            default:
+                log.log_type = LOG_ERR;
+                strcpy(log.msg, "[Dispatcher] Unknown event type");
+                break;
+            }
 
             xQueueSend(xLogQueue, &log, portMAX_DELAY);
         }
     }
  
+}
+
+void Task_Police(void *pvParameters)
+{
+    for(;;)
+    {
+
+    }
+}
+
+void Task_Ambulance(void *pvParameters)
+{
+    for(;;)
+    {
+        
+    }
+}
+
+void Task_FireDepartment(void *pvParameters)
+{
+    for(;;)
+    {
+        
+    }
 }
 
 void Task_Logger(void *pvParameters)
@@ -126,7 +172,10 @@ void my_main(void)
 
 
     xTaskCreate(Task_Generator, "Generator", configMINIMAL_STACK_SIZE, NULL, PR_GEN, NULL);
-    xTaskCreate(Task_Dispatcher, "Dispatcher", configMINIMAL_STACK_SIZE, NULL,PR_DIS, NULL);
+    xTaskCreate(Task_Dispatcher, "Dispatcher", configMINIMAL_STACK_SIZE, NULL, PR_DIS, NULL);
+    //xTaskCreate(Task_Police, "Police", configMINIMAL_STACK_SIZE, NULL, PR_PLC, NULL);
+    //xTaskCreate(Task_Ambulance, "Ambulance", configMINIMAL_STACK_SIZE, NULL, PR_AMB, NULL);
+    //xTaskCreate(Task_FireDepartment, "Fire Department", configMINIMAL_STACK_SIZE, NULL, PR_FIR, NULL);
     xTaskCreate(Task_Logger, "Logger", configMINIMAL_STACK_SIZE, NULL, PR_LOG, NULL);
 
     vTaskStartScheduler();

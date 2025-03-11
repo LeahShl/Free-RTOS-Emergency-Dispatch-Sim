@@ -99,25 +99,85 @@ void Task_Dispatcher(void *pvParameters)
 
 void Task_Police(void *pvParameters)
 {
+    EmergencyEvent_t event;
+
     for(;;)
     {
+        if(xQueueReceive(xPoliceQueue, &event, portMAX_DELAY))
+        {
+            LogEvent_t log;
+            log.event_id = event.event_id;
+            log.log_type = LOG_PLC_RCV;
+            strcpy(log.msg, "[Police] Received event");
+            xQueueSend(xLogQueue, &log, portMAX_DELAY);
 
+            if(xSemaphoreTake(xSemPoliceCabs, portMAX_DELAY))
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_PLC_HNDL;
+                strcpy(log.msg, "[Police] Finihed handling event");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemPoliceCabs);
+            }
+        }
     }
 }
 
 void Task_Ambulance(void *pvParameters)
 {
+    EmergencyEvent_t event;
+
     for(;;)
     {
-        
+        if(xQueueReceive(xAmbulanceQueue, &event, portMAX_DELAY))
+        {
+            LogEvent_t log;
+            log.event_id = event.event_id;
+            log.log_type = LOG_AMB_RCV;
+            strcpy(log.msg, "[Ambulance] Received event");
+            xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+            if(xSemaphoreTake(xSemAmbulances, portMAX_DELAY))
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_AMB_HNDL;
+                strcpy(log.msg, "[Ambulance] Finihed handling event");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemAmbulances);
+            }
+        }
     }
 }
 
 void Task_FireDepartment(void *pvParameters)
 {
+    EmergencyEvent_t event;
+
     for(;;)
     {
-        
+        if(xQueueReceive(xFireDeptQueue, &event, portMAX_DELAY))
+        {
+            LogEvent_t log;
+            log.event_id = event.event_id;
+            log.log_type = LOG_FIR_RCV;
+            strcpy(log.msg, "[Fire Dept] Received event");
+            xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+            if(xSemaphoreTake(xSemFiretrucks, portMAX_DELAY))
+            {
+                vTaskDelay(pdMS_TO_TICKS(HNDL_DELAY));
+
+                log.log_type = LOG_FIR_HNDL;
+                strcpy(log.msg, "[Fire Dept] Finihed handling event");
+                xQueueSend(xLogQueue, &log, portMAX_DELAY);
+
+                xSemaphoreGive(xSemFiretrucks);
+            }
+        }
     }
 }
 
@@ -170,12 +230,12 @@ void my_main(void)
     xSemAmbulances = xSemaphoreCreateCounting(N_AMB, N_AMB);
     xSemFiretrucks = xSemaphoreCreateCounting(N_FTR, N_FTR);
 
-
     xTaskCreate(Task_Generator, "Generator", configMINIMAL_STACK_SIZE, NULL, PR_GEN, NULL);
+
     xTaskCreate(Task_Dispatcher, "Dispatcher", configMINIMAL_STACK_SIZE, NULL, PR_DIS, NULL);
-    //xTaskCreate(Task_Police, "Police", configMINIMAL_STACK_SIZE, NULL, PR_PLC, NULL);
-    //xTaskCreate(Task_Ambulance, "Ambulance", configMINIMAL_STACK_SIZE, NULL, PR_AMB, NULL);
-    //xTaskCreate(Task_FireDepartment, "Fire Department", configMINIMAL_STACK_SIZE, NULL, PR_FIR, NULL);
+    xTaskCreate(Task_Police, "Police", configMINIMAL_STACK_SIZE, NULL, PR_PLC, NULL);
+    xTaskCreate(Task_Ambulance, "Ambulance", configMINIMAL_STACK_SIZE, NULL, PR_AMB, NULL);
+    xTaskCreate(Task_FireDepartment, "Fire Department", configMINIMAL_STACK_SIZE, NULL, PR_FIR, NULL);
     xTaskCreate(Task_Logger, "Logger", configMINIMAL_STACK_SIZE, NULL, PR_LOG, NULL);
 
     vTaskStartScheduler();

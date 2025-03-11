@@ -1,2 +1,13 @@
 # Free-RTOS-Emergency-Dispatch-Sim
-‭ he project is aimed at implementing a simulation of a city emergency dispatch system that‬ T ‭handles various emergency calls from citizens, such as fires, accidents, or medical incidents.‬ ‭The system includes a central dispatcher that forwards the calls to the relevant departments‬ ‭such as ambulance, police, fire department, and others.
+‭The project is aimed at implementing a simulation of a city emergency dispatch system that‬ ‭handles various emergency calls from citizens, such as fires, accidents, or medical incidents.‬ ‭The system includes a central dispatcher that forwards the calls to the relevant departments‬ ‭such as ambulance, police, fire department, and others.
+
+## Building And Running
+### Build
+This project is intended to be built and run on a Linux machine.
+  1. Clone this repo
+  2. `cd` into `{path-to-where-you-cloned}/Free-RTOS-Emergency-Dispatch-Sim/FreeRTOS-main/FreeRTOS/Demo/Posix_GCC`
+  3. run `make`
+
+### Run
+  1. `cd` into `{path-to-where-you-cloned}/Free-RTOS-Emergency-Dispatch-Sim/FreeRTOS-main/FreeRTOS/Demo/Posix_GCC`
+  2. run `./build/posix_demo`

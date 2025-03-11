@@ -1,3 +1,9 @@
+/**
+ * @file my_main.c
+ * @author Leah
+ * @brief Emergency dispatch system main file
+ * 
+ */
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
@@ -8,6 +14,10 @@
 #include "queue.h"
 #include "semphr.h"
 #include "edconfig.h"
+
+/************************** 
+ *        GLOBALS         * 
+ **************************/
 
 typedef struct EmergencyEvent_t
 {
@@ -31,6 +41,16 @@ SemaphoreHandle_t xSemPoliceCabs;
 SemaphoreHandle_t xSemAmbulances;
 SemaphoreHandle_t xSemFiretrucks;
 
+/************************** 
+ *         TASKS          * 
+ **************************/
+
+/**
+ * @brief Generates emergency events
+ * 
+ * Generates events at random intervals between MIN_DELAY
+ * and MAX_DELAY ms.
+ */
 void Task_Generator(void *pvParameters)
 {
     srand(time(NULL));
@@ -54,6 +74,10 @@ void Task_Generator(void *pvParameters)
 
 }
 
+/**
+ * @brief Dispatches emergency events to a fitting department
+ * 
+ */
 void Task_Dispatcher(void *pvParameters)
 {
     EmergencyEvent_t event;
@@ -97,6 +121,11 @@ void Task_Dispatcher(void *pvParameters)
  
 }
 
+/**
+ * @brief Handles police events
+ * 
+ * Will use another resource if no police cabs available
+ */
 void Task_Police(void *pvParameters)
 {
     EmergencyEvent_t event;
@@ -145,6 +174,11 @@ void Task_Police(void *pvParameters)
     }
 }
 
+/**
+ * @brief Handles medical emergency events
+ * 
+ * Will use another resource if no ambulances available
+ */
 void Task_Ambulance(void *pvParameters)
 {
     EmergencyEvent_t event;
@@ -193,6 +227,11 @@ void Task_Ambulance(void *pvParameters)
     }
 }
 
+/**
+ * @brief Handles fire events
+ * 
+ * Will use another resource if no fire trucks available
+ */
 void Task_FireDepartment(void *pvParameters)
 {
     EmergencyEvent_t event;
@@ -241,6 +280,10 @@ void Task_FireDepartment(void *pvParameters)
     }
 }
 
+/**
+ * @brief Prints logs from log queue
+ * 
+ */
 void Task_Logger(void *pvParameters)
 {
     LogEvent_t log;
@@ -253,6 +296,10 @@ void Task_Logger(void *pvParameters)
         }
     }
 }
+
+/************************** 
+ *         MAIN           * 
+ **************************/
 
 void my_main(void)
 {
@@ -291,7 +338,6 @@ void my_main(void)
     xSemFiretrucks = xSemaphoreCreateCounting(N_FTR, N_FTR);
 
     xTaskCreate(Task_Generator, "Generator", configMINIMAL_STACK_SIZE, NULL, PR_GEN, NULL);
-
     xTaskCreate(Task_Dispatcher, "Dispatcher", configMINIMAL_STACK_SIZE, NULL, PR_DIS, NULL);
     xTaskCreate(Task_Police, "Police", configMINIMAL_STACK_SIZE, NULL, PR_PLC, NULL);
     xTaskCreate(Task_Ambulance, "Ambulance", configMINIMAL_STACK_SIZE, NULL, PR_AMB, NULL);

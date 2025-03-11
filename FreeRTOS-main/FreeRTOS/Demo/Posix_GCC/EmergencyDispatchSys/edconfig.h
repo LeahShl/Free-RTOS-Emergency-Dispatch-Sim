@@ -6,7 +6,7 @@
  */
 
 /**
- * Emergency codes
+ * Emergency events
  */
 #define CODE_PLC 1 // Police event code
 #define CODE_AMB 2 // Ambulance event code
@@ -22,16 +22,21 @@
 /**
  * Time consts
  */
-#define MIN_GEN_S 1 // Min amount of seconds for event generation
-#define MAX_GEN_S 5 // Max amount of seconds for event generation
-#define EVNT_HNDL_T 3 // # of ticks for event handling
+#define MIN_DELAY 1000 // Min amount of miliseconds for event generation
+#define MAX_DELAY 5000 // Max amount of miliseconds for event generation
+#define EVNT_HNDL_T 3 // number of ticks for event handling
 
 /**
  * Priorities
  */
-#define PR_GEN 3 // Priority of event generator
-#define PR_DIS 3 // Priority of dispatcher
+#define PR_GEN 4 // Priority of event generator
+#define PR_DIS 5 // Priority of dispatcher
 #define PR_PLC 3 // Priority of police 
-#define PR_AMB 3 // Priority of ambulance
-#define PR_FIR 3 // Priority of fire department
-#define PR_LOG 3 // Priority of logger
+#define PR_AMB 6 // Priority of ambulance
+#define PR_FIR 7 // Priority of fire department
+#define PR_LOG 2 // Priority of logger
+
+/**
+ * Misc.
+ */
+#define EVNTQ_SIZE 50 // Size of the event queue

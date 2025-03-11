@@ -8,7 +8,7 @@ static void handle_sigint(int signal);
 
 #define BUILD BUILD_DIR
 
-extern void main_myproject(void);
+extern void my_main(void);
 
 int main(void)
 {
@@ -21,7 +21,7 @@ int main(void)
 
     console_init();
 
-    main_myproject();
+    my_main();
 
     return 0;
 }

@@ -27,6 +27,10 @@ QueueHandle_t xAmbulanceQueue;
 QueueHandle_t xFireDeptQueue;
 QueueHandle_t xLogQueue;
 
+SemaphoreHandle_t xSemPoliceCabs;
+SemaphoreHandle_t xSemAmbulances;
+SemaphoreHandle_t xSemFiretrucks;
+
 void Task_Generator(void *pvParameters)
 {
     srand(time(NULL));
@@ -115,6 +119,10 @@ void my_main(void)
     {
         perror("Failed to create log queue \n");
     }
+
+    xSemPoliceCabs = xSemaphoreCreateCounting(N_PCR, N_PCR);
+    xSemAmbulances = xSemaphoreCreateCounting(N_AMB, N_AMB);
+    xSemFiretrucks = xSemaphoreCreateCounting(N_FTR, N_FTR);
 
 
     xTaskCreate(Task_Generator, "Generator", configMINIMAL_STACK_SIZE, NULL, PR_GEN, NULL);
